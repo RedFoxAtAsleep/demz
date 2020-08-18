@@ -17,6 +17,7 @@ STORE_PATH = '/Users/zhaojinhui/github/demz/material'
 
 
 def index(request):
+    logger.info('index')
     return HttpResponse('Welcome to someapp.')
 
 
