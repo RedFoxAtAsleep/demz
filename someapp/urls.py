@@ -12,7 +12,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index),
-    path('download', views.download),
+    path('commit', views.save_commit),
+    path('', views.download),
 ]
 
 logging.basicConfig(level=logging.ERROR)

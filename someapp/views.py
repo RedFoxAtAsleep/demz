@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 import logging
 import asyncio
+from .apps import COMMIT_DIR
 
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -51,6 +52,28 @@ async def download_img(url):
             f.write(res.content)
     except Exception as e:
         logger.error(e)
+
+
+def save_commit(request):
+    # commit_time = time.strftime('%Y%m%d%H%M%S', time.gmtime())
+    commit_time = str(time.time_ns())
+    if request.method != 'POST':
+        return HttpResponse('POST ONLY')
+    urls = request.FILES.get('urls').read()
+    try:
+        logging.debug('SAVE COMMIT')
+        f = open(os.path.join(COMMIT_DIR, commit_time), 'wb')
+        f.write(urls)
+        f.close()
+        logging.debug('SAVE COMMIT SUCCESS')
+        return JsonResponse({'code': 0})
+    except Exception as e:
+        logging.error(str(type(e)))
+        logging.error(e)
+        logging.error('SAVE COMMIT FAIL')
+        return JsonResponse({'code': -1})
+
+
 
 
 async def download_imgs(urls):

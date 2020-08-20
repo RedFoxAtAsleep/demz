@@ -1,43 +1,14 @@
-from django.test import TestCase
-
-# Create your tests here.
-
-import asyncio
-import threading
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.schedulers.background import BaseScheduler
-from apscheduler.triggers.interval import IntervalTrigger
-from apscheduler.triggers.date import DateTrigger
-from apscheduler.triggers.cron import CronTrigger
+# -*- coding: utf-8 -*-
+import paramiko
 import logging
 import time
-import paramiko
 from paramiko.transport import Transport
+import asyncio
 
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 
-logging.getLogger('apscheduler.executors.default').setLevel(logging.WARN)
-logging.getLogger('apscheduler.scheduler').setLevel(logging.WARN)
-
-def my_schedule_job():
-    print("Callback runs in thread %s" % (threading.current_thread(),))
-
-
-async def my_coroutine():
-    logger.info(111)
-    print(111)
-    await asyncio.sleep(2)
-    # print("Coroutine runs in %s" % (threading.current_thread(),))
-    logger.info(222)
-    print(222)
-    await asyncio.sleep(2)
-    logger.info(333)
-    print(333)
-
-    await asyncio.sleep(10)
-
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.getLogger('paramiko.transport').setLevel(logging.ERROR)
 
 def asyncf(func):
     def wrapper(*args, **kwargs):
@@ -97,26 +68,22 @@ def sftp_pull_file(host, user, password, to_, from_):
         logging.error('SSH FILE PULL FAIL')
         return False
 
-def scanner():
-    logger.debug('scanning...')
-
 
 if __name__ == '__main__':
     host = '120.78.123.249'
     user = 'root'
     password = 'Ali@123456'
-    from_ = '/Users/zhaojinhui/github/demz/material/{}imgurls'
+    from_ = '/Users/zhaojinhui/github/demz/material/imgurls'
     to_ = '/root/imgurls'
     timeout = 15
+    sftp_push_file(host, user, password, from_, to_)
+
+    from_ = '/root/imgurls'
+    to_ = '/Users/zhaojinhui/github/demz/material/{}imgurls'.format(time.asctime())
+
+    async def parallel():
+        await asyncio.gather(*[sftp_pull_file(host, user, password, from_, to_) for i in range(3)])
+    asyncio.run(parallel())
+    logging.info('end')
 
 
-    sftp_pull_file(host, user, password, from_.format(time.time_ns()), to_)
-    print("Main runs in %s" % (threading.current_thread(),))
-    loop = asyncio.new_event_loop()
-    scheduler = AsyncIOScheduler(event_loop=loop)
-    scheduler.add_job(
-        sftp_push_file,
-        'interval', seconds=1,
-        args=(host, user, password, from_.format(time.time_ns()), to_)
-    )
-    scheduler.start()
