@@ -105,7 +105,7 @@ if __name__ == '__main__':
     host = '120.78.123.249'
     user = 'root'
     password = 'Ali@123456'
-    from_ = '/Users/zhaojinhui/github/demz/material/{}imgurls'
+    from_ = '/Users/zhaojinhui/github/demz/material/imgurls'
     to_ = '/root/imgurls'
     timeout = 15
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     scheduler = AsyncIOScheduler(event_loop=loop)
     scheduler.add_job(
         sftp_push_file,
-        'interval', seconds=1,
+        'interval', seconds=10,
         args=(host, user, password, from_.format(time.time_ns()), to_)
     )
     scheduler.start()

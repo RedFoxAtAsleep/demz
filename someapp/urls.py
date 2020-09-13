@@ -14,6 +14,7 @@ urlpatterns = [
     path('', views.index),
     path('commit', views.save_commit),
     path('', views.download),
+    path('post', views.post),
 ]
 
 logging.basicConfig(level=logging.ERROR)

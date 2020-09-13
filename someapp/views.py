@@ -74,10 +74,19 @@ def save_commit(request):
         return JsonResponse({'code': -1})
 
 
-
-
 async def download_imgs(urls):
     await asyncio.gather(*[download_img(url) for url in urls])
+
+
+def post(request):
+    if request.method != "POST":
+        return HttpResponse("POST ONLY".title())
+    mail = request.POST.get("mail")
+    hash_list = request.FILES.get("hash_list").read().decode()
+    print(mail)
+    print(hash_list)
+    return JsonResponse({'content': hash_list})
+
 
 
 
