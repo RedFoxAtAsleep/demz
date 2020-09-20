@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from django.core.mail.backends.smtp import EmailBackend
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 
@@ -59,7 +61,7 @@ ROOT_URLCONF = 'demz.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates', BASE_DIR / 'templates/dist'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,6 +72,15 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.1/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
+STATICFILES_DIRS = [
+    BASE_DIR / "templates/dist/static",
 ]
 
 WSGI_APPLICATION = 'demz.wsgi.application'
@@ -147,12 +158,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
-STATIC_URL = '/static/'
-
-
 # 跨域增加忽略
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
@@ -195,5 +200,13 @@ CELERY_DEFAULT_QUEUE = 'celery'
 CELERY_QUEUES = ['celery', 'async', 'schedule']
 
 
+EMAIL_BACKEND =  'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_HOST_PASSWORD = 'wy123456'
+EMAIL_HOST_USER = 'im22ic@163.com'
 
-
+backend_163 = EmailBackend(
+        host='smtp.163.com',
+        username='im22ic@163.com',
+        password='wy123456',
+    )

@@ -4,7 +4,14 @@ from django.shortcuts import render
 import logging
 import asyncio
 from .apps import COMMIT_DIR
+from django.core.mail import get_connection, EmailMultiAlternatives, EmailMessage
+from django.core.mail.backends.smtp import EmailBackend
 
+backend_163 = EmailBackend(
+        host='smtp.163.com',
+        username='im22ic@163.com',
+        password='wy123456',
+    )
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -86,6 +93,37 @@ def post(request):
     print(mail)
     print(hash_list)
     return JsonResponse({'content': hash_list})
+
+def send_mail():
+    subject, from_email, to = 'hello', 'im22ic()@163.com', 'rwjgzhjh@163.com'
+    text_content = 'This is an important message.'
+    html_content = '<p>This is an <strong>important</strong> message.</p>'
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+    # msg.content_subtype = "text"
+    msg.content_subtype = "html"  # Main content is now text/html
+    msg.send()
+
+
+
+    # with get_connection(
+    #         backend='demz.settings.backend_163'
+    # ) as connection:
+    #     EmailMessage(
+    #         'subject1', 'body1', 'im22ic@163.com', ['rwjgzhjh@163.com'],
+    #         connection=connection,
+    #     ).send()
+    with get_connection(
+            host='smtp.163.com',
+            username='im22ic@163.com',
+            password='wy123456'
+        ) as connection:
+        EmailMessage(
+            'subject1', 'body1', 'im22ic@163.com', ['rwjgzhjh@163.com'],
+            connection=connection,
+        ).send()
+
 
 
 
